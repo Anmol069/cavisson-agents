@@ -1,0 +1,40 @@
+enabled: true
+
+image:
+  repository: cavissonsystem/cmon_nfagent-u24
+  tag: "4.15.0.101"
+  pullPolicy: Always
+
+port: 7891
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "2000Mi"
+  requests:
+    cpu: "500m"
+    memory: "2000Mi"
+
+tlsSecretName: tls-secret
+
+controller: "your-controller.example.com:443"
+tier: "your-tier-name"
+ndcCommProtocol: "WSS"
+clusterName: "your-tier-name"
+jvmOpts: "-Xms1000m -Xmx1500m"
+monAgentOpts: "-F 0 -m 300 -d 5"
+verifyServerCert: "0"
+verifyHostName: "0"
+clientKey: "your-client-privatekey.key"
+clientCert: "your-client-cert.cer"
+serverCaCert: "your-ca-bundle.crt"
+
+
+nf:
+  logStorageEnv: "GMF-MyDealer"
+  outputHost: "azcusdautovm06-data.corp.ad.gmfinancial.com"
+  outputPort: "443"
+  ymlConfigNfdb: "false"
+  endpointPrefix: "/netforest"
+  autoDiscovery: "false"
+  sslVerification: "false"

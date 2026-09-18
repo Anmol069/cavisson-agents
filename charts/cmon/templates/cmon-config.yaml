@@ -1,0 +1,28 @@
+# Namespace
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: {{ .Release.Namespace }}
+---
+# ConfigMap for Cmon Agent Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cmon-config
+  namespace: {{ .Release.Namespace }}
+data:
+  cmon.env: |
+    CONTROLLER={{ .Values.controller }}
+    TIER={{ .Values.tier }}
+    NDC_COMM_PROTOCOL={{ .Values.ndcCommProtocol }}
+    CAV_CLUSTER_NAME={{ .Values.clusterName }}
+    CMON_OPTS="{{ .Values.jvmOpts }}"
+    CAV_MON_AGENT_OPTS="{{ .Values.monAgentOpts }}"
+  nf.env: |
+    CAV_LOG_STORAGE_ENV={{ .Values.nf.logStorageEnv }}
+    OUTPUT_HOST1={{ .Values.nf.outputHost }}
+    OUTPUT_PORT1={{ .Values.nf.outputPort }}
+    YML_CONFIG_NFDB={{ .Values.nf.ymlConfigNfdb }}
+    NF_ENDPOINT_PREFIX={{ .Values.nf.endpointPrefix }}
+    CAV_LOG_STORAGE_AUTO_DISCOVERY={{ .Values.nf.autoDiscovery }}
+    SSL_CERTIFICATE_VERIFICATION={{ .Values.nf.sslVerification }}

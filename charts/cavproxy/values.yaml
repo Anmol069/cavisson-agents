@@ -1,0 +1,26 @@
+enabled: true
+
+replicas: 1
+
+image:
+  repository: cavissonsystem/cavndproxy-alpine
+  tag: 4.15.0.B123
+  pullPolicy: Always
+
+port: 7923
+servicePort: 443
+
+ndhome: "/opt/cavisson/netdiagnostics"
+ldLibraryPath: "/usr/lib/x86_64-linux-gnu"
+ndcHost: "your-ndc-host.example.com"
+ndcPort: "443"
+ndcCommProtocol: "WSS"
+loggingMode: "2"
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "2Gi"
+  limits:
+    cpu: "500m"
+    memory: "2Gi"

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: cavproxy
+description: A Helm chart for deploying CavProxy on Kubernetes
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - cavisson
+  - cavproxy
+  - agent
+  - kubernetes
+maintainers:
+  - name: Cavisson Systems
+    email: support@cavisson.com

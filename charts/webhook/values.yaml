@@ -1,0 +1,191 @@
+serviceaccount: webhook-injector
+deploymentName: webhook-server
+webhookName: webhook-nd
+
+replicas: 1
+certValidityDays: 1024
+
+timeoutSeconds: 2
+failurePolicy: Ignore
+useServiceCAonOCP: true
+
+webhook:
+  logLevel: INFO
+
+# service type and port for webhook server
+service:
+  type: ClusterIP
+  port: 443
+
+# image for pods running the webhook functionality
+image:
+  repository: cavissonsystem/nd_webhook_injector  
+  tag: 4.15.0.B123
+  pullPolicy: Always
+
+securityContext:
+  runAsNonRoot: true
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+
+NDController:
+  proxyip: cavproxy.cavisson.svc.cluster.local                 #<service-name>.<namespace>.svc.cluster.local
+  proxyport: 443
+  proxymode: 1
+
+instrumentationTemplates:
+  - name: dotnet-default-debian
+    injectionRules:
+      technology: dotnet
+      image: cavissonsystem/dotnet-agent-ubuntu:4.15.0.B123 # (debian agent)
+      TierNameSource: auto
+
+      # Tier Name → The Webhook Injector will dynamically derive the tier name based on the defined conditions and set it as an environment variable for each pod.
+      # Server Name → The agent will set the server name using the pod name.
+      # Instance Name → The agent will set the instance name using the process name.
+
+      env:
+        - name: NDHOME
+          value: /opt/cavisson/netdiagnostics
+        - name: CORECLR_PROFILER
+          value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
+        - name: CORECLR_ENABLE_PROFILING
+          value: "1"
+        - name: CORECLR_PROFILER_PATH
+          value: /opt/cavisson/netdiagnostics/DotNetC/dll/ILRewriteProfiler.so
+        - name: LD_LIBRARY_PATH
+          value: /opt/cavisson/netdiagnostics/DotNetC/lib:$(LD_LIBRARY_PATH)
+        - name: DOTNET_STARTUP_HOOKS
+          value: /opt/cavisson/netdiagnostics/DotNetC/dll/ProfilerHelper.dll
+        - name: CAV_APP_AGENT_ENABLE_MONITORING
+          value: "1"
+        - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+          value: "1"
+        - name: OTEL_DOTNET_AUTO_EXCLUDE_PROCESSES
+          value: ThreadDumpTool
+
+  - name: dotnet-default-alpine
+    injectionRules:
+      technology: dotnet
+      image: cavissonsystem/dotnet-agent-alpine:4.15.0.B123 # (alpine agent)
+      TierNameSource: auto
+
+      env:
+        - name: NDHOME
+          value: /opt/cavisson/netdiagnostics
+        - name: CORECLR_PROFILER
+          value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
+        - name: CORECLR_ENABLE_PROFILING
+          value: "1"
+        - name: CORECLR_PROFILER_PATH
+          value: /opt/cavisson/netdiagnostics/DotNetC/dll/ILRewriteProfiler.so
+        - name: LD_LIBRARY_PATH
+          value: /opt/cavisson/netdiagnostics/DotNetC/lib:$(LD_LIBRARY_PATH)
+        - name: DOTNET_STARTUP_HOOKS
+          value: /opt/cavisson/netdiagnostics/DotNetC/dll/ProfilerHelper.dll
+        - name: CAV_APP_AGENT_ENABLE_MONITORING
+          value: "1"
+        - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+          value: "1"
+        - name: OTEL_DOTNET_AUTO_EXCLUDE_PROCESSES
+          value: ThreadDumpTool
+
+  - name: python-default
+    injectionRules:
+      technology: python
+      image: cavissonsystem/python-agent:4.15.0.B117
+      TierNameSource: auto
+
+  - name: java-default
+    injectionRules:
+      technology: java
+      image: cavissonsystem/java-agent:4.15.0.131  # TODO: replace with cavissonsystem java agent image
+      javaEnvVar: JAVA_TOOL_OPTIONS
+      TierNameSource: auto
+
+      env:
+        - name: NDHOME
+          value: /opt/cavisson/netdiagnostics
+        - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+          value: "ALL"
+        - name: CAV_APP_AGENT_NDCHOST
+          value: "netcloud4-15-u24.cav-test.com"
+        - name: CAV_APP_AGENT_NDCPORT
+          value: "4433"
+        - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
+          value: "WSS"
+
+  - name: nodejs-default
+    injectionRules:
+      technology: nodejs
+      image: cavissonsystem/nodejs-agent:4.15.0.B132  # TODO: replace with cavissonsystem nodejs agent image
+      TierNameSource: auto
+
+      env:
+        - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+          value: "ALL"
+        - name: CAV_APP_AGENT_NDCHOST
+          value: "netcloud4-15-u24.cav-test.com"
+        - name: CAV_APP_AGENT_NDCPORT
+          value: "4433"
+        - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
+          value: "WSS"
+
+
+instrumentationRules:
+  - name: cav-dotnet-agent-debian
+    matchRules:
+      namespaceRegex: .*            # ^cavisson$ (format for specific nameSpace)
+      labels:
+        - com.cavisson/inject-dotnetc-debian: "true"
+      podNameRegex: .*
+    injectionRules:
+      template: dotnet-default-debian
+      containerMatch:
+        excludeContainerNames:
+          - istio-proxy
+
+  - name: cav-dotnet-agent-alpine
+    matchRules:
+      namespaceRegex: .*            # ^cavisson$ (format for specific nameSpace)
+      labels:
+        - com.cavisson/inject-dotnetc-alpine: "true"
+      podNameRegex: .*
+    injectionRules:
+      template: dotnet-default-alpine
+      containerMatch:
+        excludeContainerNames:
+          - istio-proxy
+
+  - name: cav-python-agent
+    matchRules:
+      namespaceRegex: .*
+      labels:
+        - com.cavisson/inject-python: "true"
+      podNameRegex: .*
+    injectionRules:
+      template: python-default
+      containerMatch:
+        excludeContainerNames:
+          - istio-proxy
+
+  - name: cav-java-agent
+    matchRules:
+      namespaceRegex: .*
+      podNameRegex: ^(frontend)
+    injectionRules:
+      template: java-default
+      containerMatch:
+        excludeContainerNames:
+          - istio-proxy
+
+  - name: cav-nodejs-agent
+    matchRules:
+      namespaceRegex: .*
+      # - com.cavisson/inject-nodejs: "true"
+      podNameRegex: ^(checkoutservice)
+    injectionRules:
+      template: nodejs-default
+      containerMatch:
+        excludeContainerNames:
+          - istio-proxy

@@ -1,0 +1,29 @@
+apiVersion: v2
+name: cavisson-agents
+description: Application and Machine Agents (CMON + CavProxy + Webhook)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - cavisson
+  - cmon
+  - cavproxy
+  - webhook
+  - agent
+  - kubernetes
+maintainers:
+  - name: Cavisson Systems
+    email: support@cavisson.com
+
+dependencies:
+  - name: cmon
+    version: "1.0.0"
+    repository: "file://charts/cmon"
+
+  - name: cavproxy
+    version: "1.0.0"
+    repository: "file://charts/cavproxy"
+
+  - name: webhook
+    version: "1.0.0"
+    repository: "file://charts/webhook"

@@ -1,0 +1,132 @@
+namespace: cavisson
+
+cmon:
+  enabled: true
+  image:
+    repository: cavissonsystem/cmon_nf_agent
+    tag: "4.16.0.49"
+    pullPolicy: Always
+
+  controller: "nde-0-data-dtv16.cav-test.com"
+  tier: "Boutique"
+  ndcCommProtocol: "WSS"
+  clusterName: "Boutique"
+  jvmOpts: "-Xms1000m -Xmx1500m"
+  monAgentOpts: "-F 0 -m 300 -d 5"
+  verifyServerCert: "0"
+  verifyHostName: "0"
+  clientKey: "your-client-privatekey.key"
+  clientCert: "your-client-cert.cer"
+  serverCaCert: "your-ca-bundle.crt"
+
+
+
+cavproxy:
+  enabled: true
+  image:
+    repository: cavissonsystem/cavndproxy-alpine
+    tag: 4.16.0.B50
+    pullPolicy: Always
+
+  ndhome: "/opt/cavisson/netdiagnostics"
+  ldLibraryPath: "/usr/lib/x86_64-linux-gnu"
+  ndcHost: "nde-0-data-dtv16.cav-test.com"
+  ndcPort: "443"
+  ndcCommProtocol: "WSS"
+
+webhook:
+  enabled: true
+  image:
+    repository: cavissonsystem/nd_webhook_injector
+    tag: 4.16.0.B50
+    pullPolicy: Always
+
+  instrumentationTemplates:
+    - name: dotnet-default-debian
+      injectionRules:
+        technology: dotnet
+        image: cavissonsystem/dotnet-agent-ubuntu:4.15.0.B123
+        TierNameSource: auto
+        env:
+          - name: NDHOME
+            value: /opt/cavisson/netdiagnostics
+          - name: CORECLR_PROFILER
+            value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
+          - name: CORECLR_ENABLE_PROFILING
+            value: "1"
+          - name: CORECLR_PROFILER_PATH
+            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ILRewriteProfiler.so
+          - name: LD_LIBRARY_PATH
+            value: /opt/cavisson/netdiagnostics/DotNetC/lib:$(LD_LIBRARY_PATH)
+          - name: DOTNET_STARTUP_HOOKS
+            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ProfilerHelper.dll
+          - name: CAV_APP_AGENT_ENABLE_MONITORING
+            value: "1"
+          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+            value: "1"
+          - name: OTEL_DOTNET_AUTO_EXCLUDE_PROCESSES
+            value: ThreadDumpTool
+
+    - name: dotnet-default-alpine
+      injectionRules:
+        technology: dotnet
+        image: cavissonsystem/dotnet-agent-alpine:4.15.0.B123
+        TierNameSource: auto
+        env:
+          - name: NDHOME
+            value: /opt/cavisson/netdiagnostics
+          - name: CORECLR_PROFILER
+            value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
+          - name: CORECLR_ENABLE_PROFILING
+            value: "1"
+          - name: CORECLR_PROFILER_PATH
+            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ILRewriteProfiler.so
+          - name: LD_LIBRARY_PATH
+            value: /opt/cavisson/netdiagnostics/DotNetC/lib:$(LD_LIBRARY_PATH)
+          - name: DOTNET_STARTUP_HOOKS
+            value: /opt/cavisson/netdiagnostics/DotNetC/dll/ProfilerHelper.dll
+          - name: CAV_APP_AGENT_ENABLE_MONITORING
+            value: "1"
+          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+            value: "1"
+          - name: OTEL_DOTNET_AUTO_EXCLUDE_PROCESSES
+            value: ThreadDumpTool
+
+    - name: python-default
+      injectionRules:
+        technology: python
+        image: cavissonsystem/python-agent:4.15.0.B134
+        TierNameSource: auto
+
+    - name: java-default
+      injectionRules:
+        technology: java
+        image: cavissonsystem/java-agent:4.16.0.B50  # TODO: replace with cavissonsystem java agent image
+        javaEnvVar: JAVA_TOOL_OPTIONS
+        TierNameSource: auto
+        env:
+          - name: NDHOME
+            value: /opt/cavisson/netdiagnostics
+          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+            value: "ALL"
+          - name: CAV_APP_AGENT_NDCHOST
+            value: "nde-0-data-dtv16.cav-test.com"
+          - name: CAV_APP_AGENT_NDCPORT
+            value: "443"
+          - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
+            value: "WSS"
+
+    - name: nodejs-default
+      injectionRules:
+        technology: nodejs
+        image: cavissonsystem/node.js-agent:4.16.0.B50  # TODO: replace with cavissonsystem nodejs agent image
+        TierNameSource: auto
+        env:
+          - name: CAV_APP_AGENT_AGENTLOGGINGMODE
+            value: "ALL"
+          - name: CAV_APP_AGENT_NDCHOST
+            value: "nde-0-data-dtv16.cav-test.com"
+          - name: CAV_APP_AGENT_NDCPORT
+            value: "443"
+          - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
+            value: "WSS"
