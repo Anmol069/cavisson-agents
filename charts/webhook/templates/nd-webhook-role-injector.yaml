@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ .Values.serviceaccount }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
 rules:
   - apiGroups:
       - ""

@@ -66,7 +66,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ .Values.serviceaccount }}-crd
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
 rules:
   - apiGroups:
       - "ext.cav.com"
@@ -81,11 +81,11 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Values.serviceaccount }}-crd
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.serviceaccount }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Values.global.namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ .Values.serviceaccount }}-crd

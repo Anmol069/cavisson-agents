@@ -3,7 +3,7 @@ kind: ServiceAccount
 apiVersion: v1
 metadata:
   name: cmon-service-account
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
 ---
 #Cmon Role
 kind: ClusterRole
@@ -110,14 +110,14 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cmon-service-account
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
 ---
 #DaemonSet
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cmon
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
   labels:
     name: cmon
     app: cmon

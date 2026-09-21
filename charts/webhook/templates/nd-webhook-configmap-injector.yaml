@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: webhook-injector-config
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
 data:
   {{- if .Values.NDController }}
   controller: | {{ printf "\n" }}
