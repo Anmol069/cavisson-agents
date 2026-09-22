@@ -39,10 +39,6 @@ cavproxy:
 
 webhook:
   enabled: true
-
-  namespacesEnabled:
-    - boutique-argo
-
   image:
     repository: cavissonsystem/nd_webhook_injector
     tag: 4.16.0.B50

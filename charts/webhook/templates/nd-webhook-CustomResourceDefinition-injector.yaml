@@ -2,6 +2,8 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
   # name must match the spec fields below, and be in the form: <plural>.<group>
   name: cavissoninjectors.ext.cav.com
 spec:
@@ -65,6 +67,8 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
   name: {{ .Values.serviceaccount }}-crd
   namespace: {{ .Values.global.namespace }}
 rules:
@@ -80,6 +84,8 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
   name: {{ .Values.serviceaccount }}-crd
   namespace: {{ .Values.global.namespace }}
 subjects:

@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   {{- if and ( .Values.useServiceCAonOCP ) ( .Capabilities.APIVersions.Has "apps.openshift.io/v1/DeploymentConfig") }}
   annotations:
+    argocd.argoproj.io/sync-wave: "-1"
     service.beta.openshift.io/serving-cert-secret-name: {{ template "webhook-injector.name" . }}-certs
   {{- end }}
 spec:

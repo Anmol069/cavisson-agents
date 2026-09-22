@@ -2,12 +2,16 @@
 kind: Namespace
 apiVersion: v1
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
   name: {{ .Values.global.namespace }}
 ---
 # ConfigMap for Cmon Agent Configuration
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
   name: cmon-config
   namespace: {{ .Values.global.namespace }}
 data:
