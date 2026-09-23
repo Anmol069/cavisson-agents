@@ -183,7 +183,7 @@ instrumentationRules:
     matchRules:
       namespaceRegex: .*
       # - com.cavisson/inject-nodejs: "true"
-      podNameRegex: ^(checkoutservice)
+      podNameRegex: ^(paymentservice)
     injectionRules:
       template: nodejs-default
       containerMatch:
