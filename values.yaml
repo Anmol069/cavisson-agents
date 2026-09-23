@@ -133,3 +133,5 @@ webhook:
             value: "443"
           - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
             value: "WSS"
+          - name: NODE_PATH
+            value: /opt/cavisson/netdiagnostics/nodejs/src/netjsagent/node_modules
