@@ -10,7 +10,7 @@ cmon:
     tag: "4.16.0.61"
     pullPolicy: Always
 
-  controller: "nde-0-data-dtv16.cav-test.com"
+  controller: "nde-0-data-directv16.cav-test.com"
   tier: "Boutique"
   ndcCommProtocol: "WSS"
   clusterName: "Boutique"
@@ -33,7 +33,7 @@ cavproxy:
 
   ndhome: "/opt/cavisson/netdiagnostics"
   ldLibraryPath: "/usr/lib/x86_64-linux-gnu"
-  ndcHost: "nde-0-data-dtv16.cav-test.com"
+  ndcHost: "nde-0-data-directv16.cav-test.com"
   ndcPort: "443"
   ndcCommProtocol: "WSS"
 
@@ -113,7 +113,7 @@ webhook:
           - name: CAV_APP_AGENT_AGENTLOGGINGMODE
             value: "ALL"
           - name: CAV_APP_AGENT_NDCHOST
-            value: "nde-0-data-dtv16.cav-test.com"
+            value: "nde-0-data-directv16.cav-test.com"
           - name: CAV_APP_AGENT_NDCPORT
             value: "443"
           - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
@@ -128,7 +128,7 @@ webhook:
           - name: CAV_APP_AGENT_AGENTLOGGINGMODE
             value: "ALL"
           - name: CAV_APP_AGENT_NDCHOST
-            value: "nde-0-data-dtv16.cav-test.com"
+            value: "nde-0-data-directv16.cav-test.com"
           - name: CAV_APP_AGENT_NDCPORT
             value: "443"
           - name: CAV_APP_AGENT_NDC_COMM_PROTOCOL
